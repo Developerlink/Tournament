@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TrackerLibrary;
+using TrackerLibrary.DataAccess;
+using TrackerLibrary.Models;
 
 namespace TrackerUI
 {
@@ -30,10 +32,10 @@ namespace TrackerUI
                         prizePercentageTextBox.Text
                     );
 
-                foreach (IDataConnection db in GlobalConfig.Connections)
-                {
-                    db.createPrize(model);
-                }
+                // Even though this method returns a PrizeModel
+                // I don't have to put it into a variable, I just 
+                // have the option if I need it.
+                GlobalConfig.Connection.createPrize(model);
 
                 placeNameTextBox.Text = "";
                 placeNumberTextBox.Text = "";
