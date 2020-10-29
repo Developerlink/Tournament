@@ -26,11 +26,19 @@ namespace TrackerLibrary.Models
         /// <summary>
         /// The person's email address.
         /// </summary>
-        public string EmailAddress { get; set; }
+        public string Email { get; set; }
 
         /// <summary>
         /// The person's phone number
         /// </summary>
         public string PhoneNumber { get; set; }
+
+        public string FullName 
+        { 
+            get
+            {
+                return $"{FirstName} {LastName}";
+            }
+        }
     }
 }
