@@ -186,5 +186,49 @@ namespace TrackerLibrary.DataAccess.TextHelper
 
             return output;
         }
+
+        public static List<TournamentModel> ConvertToTournamentModels(
+            this List<string> lines, 
+            string tournamentFileName, 
+            string teamFileName, 
+            string peopleFileName,
+            string PrizeFileName)
+        {
+            // 0 = Id
+            // 1 = TournamentName
+            // 2 = EntryFee
+            // 3 = EnteredTeams
+            // 4 = Prizes
+            // 5 = Rounds
+            List<TournamentModel> output = new List<TournamentModel>();
+            List<TeamModel> teams = teamFileName.FullFilePath().LoadFile().ConvertToTeamModels(peopleFileName);
+            List<PrizeModel> prizes = new List<PrizeModel>();
+            List<MatchupModel> rounds = new List<MatchupModel>();
+
+            foreach (string line in lines)
+            {
+                string[] columns = line.Split(',');
+
+                var tm = new TournamentModel();
+                tm.Id = int.Parse(columns[0]);
+                tm.TournamentName = columns[1];
+                tm.EntryFee = decimal.Parse(columns[2]);
+
+                string[] teamIds = columns[3].Split('|');
+                foreach (string id in teamIds)
+                {
+                    tm.EnteredTeams.Add(teams.Where(x => x.Id == int.Parse(id)).First());
+                }
+
+                string[] prizeIds = columns[4].Split('|');
+                foreach (string id in prizeIds)
+                {
+                    tm.Prizes.Add(prizes.Where(x => x.Id == int.Parse(id)).First());
+                }
+
+
+            }
+
+        }
     }
 }

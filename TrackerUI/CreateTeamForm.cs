@@ -14,14 +14,16 @@ namespace TrackerUI
 {
     public partial class CreateTeamForm : Form
     {
+        ITeamRequester callingForm;
         private List<PersonModel> availableTeamMembers = GlobalConfig.Connection.GetPersonAll();
         private List<PersonModel> selectedTeamMembers = new List<PersonModel>();
-
         private string InvalidFormMessage = "This form has invalid information. Please check it and try again.";
 
-        public CreateTeamForm()
+        public CreateTeamForm(ITeamRequester caller)
         {
             InitializeComponent();
+
+            callingForm = caller;
 
             //CreateSampleData();
 
@@ -63,8 +65,10 @@ namespace TrackerUI
                 p.PhoneNumber = phoneNumberTextBox.Text;
 
                 // Passing back the person after getting the id from inserting the 
-                // person in the database.
-                p = GlobalConfig.Connection.createPerson(p);
+                // person in the database
+                //! - But this is actually not necessary because it's a reference type and 
+                //! the id has already been passed to it from the createPerson method!
+                p = GlobalConfig.Connection.CreatePerson(p);
 
                 availableTeamMembers.Add(p);
 
@@ -146,17 +150,16 @@ namespace TrackerUI
                 t.TeamName = teamNameTextBox.Text;
                 t.TeamMembers = selectedTeamMembers;
 
-                t = GlobalConfig.Connection.createTeam(t);
+                GlobalConfig.Connection.CreateTeam(t);
 
-                // TODO - If we aren't closing this form after creation, reset the form
+                callingForm.TeamComplete(t);
+
+                this.Close();
             }
             else
             {
                 MessageBox.Show(InvalidFormMessage);
             }
-
-
-
         }
 
         private bool TeamNameIsValid()
