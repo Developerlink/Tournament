@@ -226,9 +226,120 @@ namespace TrackerLibrary.DataAccess.TextHelper
                     tm.Prizes.Add(prizes.Where(x => x.Id == int.Parse(id)).First());
                 }
 
+                // TODO - Capture rounds information
 
+                output.Add(tm);
             }
 
+            return output; 
+        }
+
+        public static void SaveToTournamentFile(this List<TournamentModel> models, string fileName)
+        {
+            List<string> lines = new List<string>();
+
+            foreach (TournamentModel tm in models)
+            { 
+                // The @ symbol makes it possible to align a long string in
+                // separate lines without the '+'. 
+                lines.Add($@"{ tm.Id },
+                    { tm.TournamentName },
+                    { tm.EntryFee },
+                    { ConvertTeamsListToString(tm.EnteredTeams) },
+                    { ConvertPrizesListToString(tm.Prizes) },
+                    { ConvertRoundsListToString(tm.Rounds) }");
+            } 
+
+            File.WriteAllLines(fileName.FullFilePath(), lines); 
+        }
+
+        private static string ConvertTeamsListToString(List<TeamModel> teams)
+        {
+            string output = "";
+
+            // This in case there are no people which will cause
+            // Substring method down below to cause a error.
+            if (teams.Count == 0)
+            {
+                return "";
+            }
+
+            foreach (TeamModel t in teams)
+            {
+                output += $"{t.Id}|";
+            }
+
+            // Removes the last '|' from the string.
+            output = output.Substring(0, output.Length - 1);
+
+            return output;
+        }
+
+        private static string ConvertPrizesListToString(List<PrizeModel> prizes
+            )
+        {
+            string output = "";
+
+            // This in case there are no people which will cause
+            // Substring method down below to cause a error.
+            if (prizes.Count == 0)
+            {
+                return "";
+            }
+
+            foreach (PrizeModel p in prizes)
+            {
+                output += $"{p.Id}|";
+            }
+
+            // Removes the last '|' from the string.
+            output = output.Substring(0, output.Length - 1);
+
+            return output;
+        }
+
+        private static string ConvertRoundsListToString(List<List<MatchupModel>> rounds)
+        {
+            string output = "";
+
+            // This in case there are no people which will cause
+            // Substring method down below to cause a error.
+            if (rounds.Count == 0)
+            {
+                return "";
+            }
+
+            foreach (List<MatchupModel> r in rounds)
+            {
+                output += $"{ ConvertMatchupsListToString(r) })|";
+            }
+
+            // Removes the last '|' from the string.
+            output = output.Substring(0, output.Length - 1);
+
+            return output;
+        }
+
+        private static string ConvertMatchupsListToString(List<MatchupModel> matchups)
+        {
+            string output = "";
+
+            // This in case there are no people which will cause
+            // Substring method down below to cause a error.
+            if (matchups.Count == 0)
+            {
+                return "";
+            }
+
+            foreach (MatchupModel m in matchups)
+            {
+                output += $"{ m.Id })^";
+            }
+
+            // Removes the last '|' from the string.
+            output = output.Substring(0, output.Length - 1);
+
+            return output;
         }
     }
 }

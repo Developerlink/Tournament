@@ -106,6 +106,23 @@ namespace TrackerLibrary.DataAccess
                 .FullFilePath()
                 .LoadFile()
                 .ConvertToTournamentModels(TournamentFile, TeamFile, PeopleFile, PrizesFile);
+
+            int currentId = 1;
+
+            // If count is 0 then there are no records and skip finding max value.
+            if (tournaments.Count > 0)
+            {
+                // Find the max ID
+                currentId = tournaments.OrderByDescending(x => x.Id).First().Id + 1;
+            }
+
+            model.Id = currentId;
+
+            tournaments.Add(model);
+
+            tournaments.SaveToTournamentFile(TournamentFile);
+
+            return model;
         }
 
         public List<PersonModel> GetPersonAll()

@@ -36,6 +36,6 @@ namespace TrackerLibrary.Models
         /// <summary>
         /// The list of rounds and matchups.
         /// </summary>
-        public List<MatchupModel> Rounds { get; set; } = new List<MatchupModel>();
+        public List<List<MatchupModel>> Rounds { get; set; } = new List<List<MatchupModel>>();
     }
 }
